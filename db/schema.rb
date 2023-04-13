@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_04_13_031755) do
+ActiveRecord::Schema.define(version: 2023_04_13_033456) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,12 +46,6 @@ ActiveRecord::Schema.define(version: 2023_04_13_031755) do
     t.integer "brew_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "users_table", id: :integer, default: nil, force: :cascade do |t|
-    t.text "user_name"
-    t.text "user_email"
-    t.index ["user_email"], name: "users_table_user_email_key", unique: true
   end
 
   add_foreign_key "subscriptions", "customers"
