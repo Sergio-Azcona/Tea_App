@@ -17,8 +17,26 @@ class SubscriptionSerializer
                             title: subscription.title,
                             price: subscription.price,
                             frequency: subscription.frequency, 
+                            status: subscription.status,
                             tea_id: subscription.tea_id,
                             customer_id: subscription.customer_id
+              }
+        }
+    }
+  end
+
+  def self.update_status(subscription)
+    # require 'pry';binding.pry
+    {
+      "data": 
+            {
+              "id": subscription.id.to_s,
+              "type": subscription.class.to_s.downcase,
+              "attributes": {
+                            title: subscription.title,
+                            status: subscription.status,
+                            customer_id: subscription.customer_id,
+                            tea_id: subscription.tea_id,
               }
         }
     }

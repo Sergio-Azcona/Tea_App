@@ -19,6 +19,14 @@ class Api::V1::SubscriptionsController < ApplicationController
   end
 
   def update
+    begin
+      subscription = Subscription.find(params[:id])
+      subscription.toggle!(:status)
+      # require 'pry';binding.pry
+      render json: SubscriptionSerializer.update_status(subscription)
+    rescue => errors
+       # render json: ErrorSerializer(error, 422), status: 422
+    end
   end
 
   private
