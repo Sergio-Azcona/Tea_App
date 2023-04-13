@@ -2,7 +2,7 @@
 require 'spec_helper'
 ENV['RAILS_ENV'] ||= 'test'
 require_relative '../config/environment'
-
+require 'faker'
 require 'database_cleaner'
 
 require 'simplecov'
