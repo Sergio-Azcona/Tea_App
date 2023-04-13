@@ -1,12 +1,38 @@
 require 'rails_helper'
 
 describe 'CustomerSubscriptionAPI' do
-
-  xdescribe 'Customer Subscription Index' do
+  describe 'Customer Subscription Index' do
     describe 'Happy Path' do
       before(:each) do
-        @customers = create(:customer, 2)
-        @subscriptions = create_list(:subscription, 7)
+        @customers = create_list(:customer, 2)
+        @C1_subscriptions = create_list(:subscription, 5, customer: @customers.first)
+        @C2_subscriptions = create_list(:subscription, 3, customer: @customers.last)
+      end
+
+      it 'returns the customers subscription records' do
+        get "/api/v1/customers/#{@customers.last.id}/subscriptions"
+        request_response = JSON.parse(response.body, symbolize_names: true)[:data]
+        # require 'pry';binding.pry
+        expect(response).to be_successful
+        expect(response.status).to eq(200)
+        
+        # expect(request_response).to_not include(@C1_subscriptions)
+        # expect(request_response).to include(@customers.last.subscriptions)
+        expect(request_response.count).to eq(@C2_subscriptions.count)
+        
+        #entries belong to the same customer
+        expect(request_response[0][:attributes][:customer_id]).to eq(@C2_subscriptions.first.customer_id)
+        expect(request_response[0][:attributes][:customer_id]).to eq(@C2_subscriptions.last.customer_id)
+        expect(request_response[-1][:attributes][:customer_id]).to eq(@C2_subscriptions.first.customer_id)
+        expect(request_response[-1][:attributes][:customer_id]).to eq(@C2_subscriptions.last.customer_id)
+
+        #json responses reflect DB info
+        # require 'pry';binding.pry
+        expect(request_response[0][:id].to_i).to eq(@C2_subscriptions.first.id)
+        expect(request_response[0][:attributes][:status]).to eq(@C2_subscriptions.first.status)
+        expect(request_response[0][:attributes][:price]).to eq(@C2_subscriptions.first.price)
+        expect(request_response[0][:attributes][:frequency]).to eq(@C2_subscriptions.first.frequency)
+        expect(request_response[0][:attributes][:tea_id]).to eq(@C2_subscriptions.first.tea_id)
       end
     end
   end
@@ -29,7 +55,7 @@ describe 'CustomerSubscriptionAPI' do
         })
 
         post "/api/v1/customers/#{@customer.id}/subscriptions", headers: headers, params: JSON.generate(subscription: params)
-        
+    
         #DB record created 
         last_created = Subscription.last                
         expect(last_created.customer_id).to eq(@customer.id)
