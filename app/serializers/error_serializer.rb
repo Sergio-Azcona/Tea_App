@@ -4,7 +4,7 @@ class ErrorSerializer
     { "errors": 
               [
                 {
-                "error_message":  error.message,
+                "error_message":  error,
                 "status": status.to_s
                 }
               ]
