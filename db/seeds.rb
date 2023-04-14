@@ -7,6 +7,6 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 
 
-create_list(:customer, 40)
-create_list(:subscription, 100)
-create_list(:tea, 300)
+FactoryBot.create_list(:customer, 3)
+FactoryBot.create_list(:subscription, 50)
+FactoryBot.create_list(:tea, 100)
