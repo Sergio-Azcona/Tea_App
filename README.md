@@ -1,24 +1,108 @@
-# README
+#### `TEA_APP README`
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+### Project's_Overview
+Goal: record, maintain and return records of customers' subscriptions
+Features: 
+  1. `GET`  - return all of a customer's subscription records 
+  2. `Post` - save a new customer subscription record
+  3. `Patch`- updated the status of an existing customer subscription record
+ 
+### Set_Up
+run the following commands in the terminal: 
+  1. `bundle install`
+  2. `rails g rspec:install`
+  3. `rails db:{drop,create,migrate,seed}`
 
-Things you may want to cover:
+### Run_Tests
+run the following commands in the terminal: 
+  1. `bundle exec rspec spec`
 
-* Ruby version
+### Endpoints
+## Subscription_Index
+`GET /api/v1/customers/:id/subscriptions`
 
-* System dependencies
+  # Happy_Response:
+  ```
+      {
+          "data": [
+              {
+                  "id": "39",
+                  "type": "subscription",
+                  "attributes": {
+                      "title": "anxiety",
+                      "price": 810.32,
+                      "frequency": 2,
+                      "status": false,
+                      "tea_id": 39,
+                      "customer_id": 42
+                  }
+              }
+          ]
+      }
+  ```
 
-* Configuration
+## Subscription_Create
+`POST /api/v1/customers/:id/subscriptions`
 
-* Database creation
+  # Body
+  ```
+      {
+      "title": "Basic Plan",
+      "price": 10.99,
+      "frequency": 1,
+      "tea_id": 1
+      }
+  ```
 
-* Database initialization
+  # Happy_Response
+  ```
+      {
+      "data": {
+          "id": "51",
+          "type": "subscription",
+          "attributes": {
+              "title": "Basic Plan",
+              "price": 10.99,
+              "frequency": 1,
+              "status": true,
+              "tea_id": 1,
+              "customer_id": 1
+          }
+        }
+      }
+  ```
 
-* How to run the test suite
+## Subscription_Update
+`PATCH /api/v1/customers/:id/subscriptions/:id`
 
-* Services (job queues, cache servers, search engines, etc.)
+  # Body
+  {
+    "status": "" 
+  }
 
-* Deployment instructions
+  # Happy_Response
+  {
+    "data": {
+        "id": "39",
+        "type": "subscription",
+        "attributes": {
+            "title": "anxiety",
+            "status": true,
+            "customer_id": 42,
+            "tea_id": 39
+        }
+    }
+  }
 
-* ...
+### Error_Handling
+At the moment we are only handling RecordNotFound scenarios
+
+  # Sad_Response
+  {
+    "errors": [
+        {
+            "error_message": "ActiveRecord::RecordNotFound no_record_response",
+            "status": "404"
+        }
+    ]
+  }
