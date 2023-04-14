@@ -1,21 +1,24 @@
 class Api::V1::SubscriptionsController < ApplicationController
 
   def index
-    customer = Customer.find(params[:customer_id])
-    subscriptions = customer.subscriptions
-    # require 'pry';binding.pry
-    render json: SubscriptionSerializer.all_record(subscriptions)
+    begin 
+      customer = Customer.find(params[:customer_id])
+      subscriptions = customer.subscriptions
+      render json: SubscriptionSerializer.all_record(subscriptions)
+    rescue => error
+      # require 'pry';binding.pry
+      render json: ErrorSerializer.bad_data(error, 400), status: :bad_request
+    end 
   end
 
   def create
     begin 
       customer = Customer.find(params[:customer_id])
       new_sub = customer.subscriptions.create!(subscription_params)
-      new_sub.toggle!(:status)
       render json: SubscriptionSerializer.new_record(new_sub)
       # require 'pry';binding.pry
     rescue => error
-      # render json: ErrorSerializer(error, 422), status: 422
+      # render json: ErrorSerializer(error, 422), status: :unprocessable_entity
     end
   end
 
@@ -25,7 +28,7 @@ class Api::V1::SubscriptionsController < ApplicationController
       subscription.toggle!(:status)
       render json: SubscriptionSerializer.update_status(subscription)
     rescue => errors
-       # render json: ErrorSerializer(error, 422), status: 422
+       # render json: ErrorSerializer(error, 422), status: :unprocessable_entity
     end
   end
 

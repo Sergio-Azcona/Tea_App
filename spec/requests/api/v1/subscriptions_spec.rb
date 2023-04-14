@@ -1,15 +1,15 @@
 require 'rails_helper'
 
 describe 'CustomerSubscriptionAPI' do
-  describe 'Customer Subscription Index' do
+  describe '#index of Customer Subscriptions' do
     describe 'Happy Path' do
       before(:each) do
-        @customers = create_list(:customer, 2)
+        @customers = create_list(:customer, 3)
         @C1_subscriptions = create_list(:subscription, 5, customer: @customers.first)
         @C2_subscriptions = create_list(:subscription, 3, customer: @customers.last)
       end
 
-      it 'returns the customers subscription records' do
+      it 'returns all customer subscription records' do
         get "/api/v1/customers/#{@customers.last.id}/subscriptions"
         request_response = JSON.parse(response.body, symbolize_names: true)[:data]
         # require 'pry';binding.pry
@@ -33,6 +33,37 @@ describe 'CustomerSubscriptionAPI' do
         expect(request_response[0][:attributes][:price]).to eq(@C2_subscriptions.first.price)
         expect(request_response[0][:attributes][:frequency]).to eq(@C2_subscriptions.first.frequency)
         expect(request_response[0][:attributes][:tea_id]).to eq(@C2_subscriptions.first.tea_id)
+      end
+
+      it 'returns an empty array if the customer has no subscription records' do
+      end
+
+
+    end
+
+    describe 'Sad Path' do
+      before(:each) do
+        # @customers = create_list(:customer, 2)
+        # @C1_subscriptions = create_list(:subscription, 5)
+        # @C2_subscriptions = create_list(:subscription, 3)
+      end
+
+      it 'returns an error response if customers subscription does not exist' do
+        Customer.delete_all #DB delete all customers to ensure DB is clean
+        get "/api/v1/customers/11001/subscriptions"
+        request_response = JSON.parse(response.body, symbolize_names: true)
+        expect(response).to_not be_successful
+        expect(response.status).to eq(400)
+        # require 'pry';binding.pry
+        expect(request_response).to be_a Hash 
+        expect(request_response.keys).to eq([:errors])
+
+        expect(request_response[:errors]).to be_a Array
+        expect(request_response[:errors].count).to eq(1)
+        
+        expect(request_response[:errors][0].keys).to eq([:error_message, :status])
+        expect(request_response[:errors][0][:error_message]).to be_a String
+        expect(request_response[:errors][0][:status]).to be_a String
       end
     end
   end
