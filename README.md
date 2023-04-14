@@ -1,27 +1,27 @@
-#### `TEA_APP README`
+# `TEA_APP README`
 
-### Project's_Overview
+## Project's_Overview
 Goal: record, maintain and return records of customers' subscriptions
 Features: 
   1. `GET`  - return all of a customer's subscription records 
   2. `Post` - save a new customer subscription record
   3. `Patch`- updated the status of an existing customer subscription record
  
-### Set_Up
+## Set_Up
 run the following commands in the terminal: 
   1. `bundle install`
   2. `rails g rspec:install`
   3. `rails db:{drop,create,migrate,seed}`
 
-### Run_Tests
+## Run_Tests
 run the following commands in the terminal: 
   1. `bundle exec rspec spec`
 
-### Endpoints
-## Subscription_Index
+## Endpoints
+### Subscription_Index
 `GET /api/v1/customers/:id/subscriptions`
 
-  # Happy_Response:
+  #### Happy_Response:
   ```
       {
           "data": [
@@ -41,10 +41,10 @@ run the following commands in the terminal:
       }
   ```
 
-## Subscription_Create
+### Subscription_Create
 `POST /api/v1/customers/:id/subscriptions`
 
-  # Body
+  #### Body
   ```
       {
       "title": "Basic Plan",
@@ -54,7 +54,7 @@ run the following commands in the terminal:
       }
   ```
 
-  # Happy_Response
+  #### Happy_Response
   ```
       {
       "data": {
@@ -72,15 +72,15 @@ run the following commands in the terminal:
       }
   ```
 
-## Subscription_Update
+### Subscription_Update
 `PATCH /api/v1/customers/:id/subscriptions/:id`
 
-  # Body
+  #### Body
   {
     "status": "" 
   }
 
-  # Happy_Response
+  #### Happy_Response
   {
     "data": {
         "id": "39",
@@ -94,10 +94,10 @@ run the following commands in the terminal:
     }
   }
 
-### Error_Handling
+## Error_Handling
 At the moment we are only handling RecordNotFound scenarios
 
-  # Sad_Response
+  #### Sad_Response
   {
     "errors": [
         {
