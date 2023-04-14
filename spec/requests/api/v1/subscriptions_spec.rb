@@ -59,7 +59,7 @@ describe 'CustomerSubscriptionAPI' do
         request_response = JSON.parse(response.body, symbolize_names: true)
         expect(response).to_not be_successful
         expect(response.status).to eq(400)
-        require 'pry';binding.pry
+        # require 'pry';binding.pry
         expect(request_response).to be_a Hash 
         expect(request_response.keys).to eq([:errors])
 
@@ -115,13 +115,13 @@ describe 'CustomerSubscriptionAPI' do
     end
 
     describe 'Sad Path' do
-      it 'returns an error response if customers subscription does not exist' do
+      it 'returns an error response if customers does not exist' do
         Customer.delete_all #DB delete all customers to ensure DB is clean
         get "/api/v1/customers/11001/subscriptions"
         request_response = JSON.parse(response.body, symbolize_names: true)
         expect(response).to_not be_successful
         expect(response.status).to eq(400)
-        # require 'pry';binding.pry
+        require 'pry';binding.pry
         expect(request_response).to be_a Hash 
         expect(request_response.keys).to eq([:errors])
 
