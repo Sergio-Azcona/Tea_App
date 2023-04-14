@@ -5,8 +5,24 @@ describe 'CustomerSubscriptionAPI' do
     describe 'Happy Path' do
       before(:each) do
         @customers = create_list(:customer, 3)
-        @C1_subscriptions = create_list(:subscription, 5, customer: @customers.first)
+        @C1_subscriptions = create_list(:subscription, 1, customer: @customers.first)
         @C2_subscriptions = create_list(:subscription, 3, customer: @customers.last)
+      end
+
+      it 'returns an empty array if the customer has no subscription records' do
+        expect(@customers.second.subscriptions.count).to eq(0)
+
+        get "/api/v1/customers/#{@customers.second.id}/subscriptions"
+        request_response = JSON.parse(response.body, symbolize_names: true)
+        
+        expect(response).to be_successful
+        expect(response.status).to eq(200)
+        # require 'pry';binding.pry
+        expect(request_response).to be_a Hash 
+        expect(request_response.keys).to eq([:data])
+
+        expect(request_response[:data]).to be_a Array
+        expect(request_response[:data].count).to eq(0)
       end
 
       it 'returns all customer subscription records' do
@@ -16,8 +32,8 @@ describe 'CustomerSubscriptionAPI' do
         expect(response).to be_successful
         expect(response.status).to eq(200)
         
-        # expect(request_response).to_not include(@C1_subscriptions)
-        # expect(request_response).to include(@customers.last.subscriptions)
+        expect(request_response.include?(@C1_subscriptions.first)).to eq(false)
+
         expect(request_response.count).to eq(@C2_subscriptions.count)
         
         #entries belong to the same customer
@@ -34,20 +50,9 @@ describe 'CustomerSubscriptionAPI' do
         expect(request_response[0][:attributes][:frequency]).to eq(@C2_subscriptions.first.frequency)
         expect(request_response[0][:attributes][:tea_id]).to eq(@C2_subscriptions.first.tea_id)
       end
-
-      it 'returns an empty array if the customer has no subscription records' do
-      end
-
-
     end
 
     describe 'Sad Path' do
-      before(:each) do
-        # @customers = create_list(:customer, 2)
-        # @C1_subscriptions = create_list(:subscription, 5)
-        # @C2_subscriptions = create_list(:subscription, 3)
-      end
-
       it 'returns an error response if customers subscription does not exist' do
         Customer.delete_all #DB delete all customers to ensure DB is clean
         get "/api/v1/customers/11001/subscriptions"
