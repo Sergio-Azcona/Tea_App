@@ -11,6 +11,7 @@ class Api::V1::SubscriptionsController < ApplicationController
   end
 
   def create
+    # require 'pry';binding.pry
     # begin 
       customer = Customer.find(params[:customer_id])
       new_sub = customer.subscriptions.create!(subscription_params)
@@ -22,13 +23,15 @@ class Api::V1::SubscriptionsController < ApplicationController
   end
 
   def update
-    begin
+    # require 'pry';binding.pry
+    # begin
       subscription = Subscription.find(params[:id])
       subscription.toggle!(:status)
       render json: SubscriptionSerializer.update_status(subscription)
-    rescue => errors
-       # render json: ErrorSerializer(error, 422), status: :unprocessable_entity
-    end
+    # rescue => errors
+    #   require 'pry';binding.pry
+    #    render json: ErrorSerializer(error, 422), status: :unprocessable_entity
+    # end
   end
 
   private

@@ -58,7 +58,7 @@ describe 'CustomerSubscriptionAPI' do
         get "/api/v1/customers/11001/subscriptions"
         request_response = JSON.parse(response.body, symbolize_names: true)
         expect(response).to_not be_successful
-        expect(response.status).to eq(400)
+        expect(response.status).to eq(404)
         # require 'pry';binding.pry
         expect(request_response).to be_a Hash 
         expect(request_response.keys).to eq([:errors])
@@ -87,7 +87,7 @@ describe 'CustomerSubscriptionAPI' do
         title: "Basic Plan",
         price: 10.99,
         frequency: 1,
-        tea_id: @teas.second.id,
+        tea_id: @teas.second.id
         })
 
         post "/api/v1/customers/#{@customer.id}/subscriptions", headers: headers, params: JSON.generate(subscription: params)
@@ -116,12 +116,25 @@ describe 'CustomerSubscriptionAPI' do
 
     describe 'Sad Path' do
       it 'returns an error response if customers does not exist' do
+        @teas = create_list(:tea, 11)
+
         Customer.delete_all #DB delete all customers to ensure DB is clean
-        get "/api/v1/customers/11001/subscriptions"
+
+        headers = {"CONTENT_TYPE" => "application/json"}
+
+        params = ({
+        title: "Basic Plan",
+        price: 10.99,
+        frequency: 1,
+        tea_id: @teas.second.id,
+        })
+
+        post "/api/v1/customers/12454/subscriptions", headers: headers, params: JSON.generate(subscription: params)
+    
         request_response = JSON.parse(response.body, symbolize_names: true)
         expect(response).to_not be_successful
-        expect(response.status).to eq(400)
-        require 'pry';binding.pry
+        expect(response.status).to eq(404)
+        # require 'pry';binding.pry
         expect(request_response).to be_a Hash 
         expect(request_response.keys).to eq([:errors])
 
@@ -132,7 +145,6 @@ describe 'CustomerSubscriptionAPI' do
         expect(request_response[:errors][0][:error_message]).to be_a String
         expect(request_response[:errors][0][:status]).to be_a String
       end
-    
     end
   end 
 
@@ -172,6 +184,39 @@ describe 'CustomerSubscriptionAPI' do
         expect(request_response[:attributes][:tea_id]).to eq(updated_sub.tea_id)
       end
     
+    describe 'Sad Path' do
+      before(:each) do
+        @customer = create(:customer)
+        @teas = create_list(:tea, 7)
+        # @subscription = create(:subscription, status: false)
+      end
+
+      it 'subscription does not exist' do
+        headers = {"CONTENT_TYPE" => "application/json"}
+
+        params = ({
+        status: @subscription.status
+        })
+
+        patch "/api/v1/customers/#{@customer.id}/subscriptions/1254", headers: headers, params: JSON.generate(subscription: params)
+        request_response = JSON.parse(response.body, symbolize_names: true)
+
+        expect(response).to_not be_successful
+        expect(response.status).to eq(404)
+        # require 'pry';binding.pry
+        expect(request_response).to be_a Hash 
+        expect(request_response.keys).to eq([:errors])
+
+        expect(request_response[:errors]).to be_a Array
+        expect(request_response[:errors].count).to eq(1)
+        
+        expect(request_response[:errors][0].keys).to eq([:error_message, :status])
+        expect(request_response[:errors][0][:error_message]).to be_a String
+        expect(request_response[:errors][0][:status]).to be_a String
+
+      end
+    end
+
     end
   end
 
